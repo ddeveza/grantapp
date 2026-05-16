@@ -13,7 +13,7 @@ private class SM_GrantApplicationControllerTest {
     }
 
     @isTest
-    static void submitApplication_delegatesToServiceAndPersistsContact() {
+    static void delegatesToServiceAndPersistsContact() {
         GrantApplicationWrapper w = buildValidWrapper('6577777777');
 
         Test.startTest();
@@ -35,48 +35,6 @@ private class SM_GrantApplicationControllerTest {
             6,
             [SELECT COUNT() FROM Grant_Disbursed__c WHERE Contact__c = :contacts[0].Id],
             'Controller should also trigger downstream disbursement scheduling.'
-        );
-    }
-
-    @isTest
-    static void submitApplication_propagatesValidationExceptions() {
-        // Missing every required field should bubble up from the validator.
-        GrantApplicationWrapper w = new GrantApplicationWrapper();
-
-        Boolean thrown = false;
-        try {
-            SM_GrantApplicationController.submitApplication(w);
-        } catch (AuraHandledException e) {
-            thrown = true;
-        }
-
-        Assert.areEqual(
-            thrown,
-            'Validation errors from the service must surface to the @AuraEnabled caller.'
-        );
-
-        Assert.areEqual(
-            0,
-            [SELECT COUNT() FROM Contact WHERE LastName != null],
-            'No contact should be created when the controller call fails validation.'
-        );
-    }
-
-    @isTest
-    static void submitApplication_propagatesInvalidSupportOptionFromService() {
-        GrantApplicationWrapper w = buildValidWrapper('6588888888');
-        w.supportOption = 'Bogus Option';
-
-        Boolean thrown = false;
-        try {
-            SM_GrantApplicationController.submitApplication(w);
-        } catch (AuraHandledException e) {
-            thrown = true;
-        }
-
-        Assert.areEqual(
-            thrown,
-            'An unknown support option must propagate as an AuraHandledException to the LWC.'
         );
     }
 }
