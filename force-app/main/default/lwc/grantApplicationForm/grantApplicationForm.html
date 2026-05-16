@@ -1,0 +1,55 @@
+<template>
+
+    <lightning-card title="Grant Application">
+
+        <div class="slds-p-around_medium">
+
+            <lightning-input
+                label="First Name"
+                value={firstName}
+                onchange={handleFirstName}>
+            </lightning-input>
+
+            <lightning-input
+                label="Last Name"
+                value={lastName}
+                onchange={handleLastName}>
+            </lightning-input>
+
+            <lightning-input
+                label="Phone"
+                value={phone}
+                onchange={handlePhone}>
+            </lightning-input>
+
+            <lightning-input
+                label="Postal Code"
+                value={postalCode}
+                onchange={handlePostalCode}>
+            </lightning-input>
+
+            <lightning-input
+                type="number"
+                label="Monthly Income"
+                value={monthlyIncome}
+                onchange={handleIncome}>
+            </lightning-input>
+
+            <lightning-combobox
+                label="Support Option"
+                value={supportOption}
+                options={supportOptions}
+                onchange={handleOption}>
+            </lightning-combobox>
+
+            <lightning-button
+                label="Submit"
+                variant="brand"
+                onclick={submitForm}>
+            </lightning-button>
+
+        </div>
+
+    </lightning-card>
+
+</template>
