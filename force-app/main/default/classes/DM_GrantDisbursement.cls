@@ -11,9 +11,9 @@ public with sharing class DM_GrantDisbursement {
     public static Support_Option_Config__mdt getSupportOption(String supportOptionName) {
         
        List<Support_Option_Config__mdt> configs = [
-            SELECT DeveloperName, Monthly_Amount__c Duration_Months__c
+            SELECT Label, Monthly_Amount__c, Duration_Amount__c
             FROM Support_Option_Config__mdt
-            WHERE DeveloperName = :developerName
+            WHERE Label = :supportOptionName
             LIMIT 1
         ];
         
