@@ -1,15 +1,3 @@
-/**
- * Unit tests for SM_GrantDisbursment.
- *
- * Relies on the seeded Support_Option_Config__mdt custom metadata records
- * (Option 1 / Option 2 / Option 3) shipped with the project. Custom
- * metadata is automatically visible to Apex tests so no extra seeding is
- * required.
- *
- * Option 1 -> 3 months * $500  = $1,500 total
- * Option 2 -> 6 months * $300  = $1,800 total
- * Option 3 -> 12 months * $140 = $1,680 total
- */
 @isTest
 private class SM_GrantDisbursmentTest {
 
@@ -48,7 +36,7 @@ private class SM_GrantDisbursmentTest {
             ORDER BY Disbursed_Date__c
         ];
 
-        System.assertEquals(
+        Assert.areEqual(
             OPTION_1_DURATION,
             grants.size(),
             'Should create one grant per month of the support option.'
@@ -56,17 +44,17 @@ private class SM_GrantDisbursmentTest {
 
         Date expectedStart = Date.today().toStartOfMonth();
         for (Integer i = 0; i < grants.size(); i++) {
-            System.assertEquals(
+            Assert.areEqual(
                 OPTION_1_MONTHLY,
                 grants[i].Disbursed_Amount__c,
                 'Each grant should match the configured monthly amount.'
             );
-            System.assertEquals(
+            Assert.areEqual(
                 expectedStart.addMonths(i),
                 grants[i].Disbursed_Date__c,
                 'Grants should be scheduled one month apart starting this month.'
             );
-            System.assertEquals(
+            Assert.areEqual(
                 false,
                 grants[i].Is_Disbursed__c,
                 'Newly created grants should default to not yet disbursed.'
@@ -85,12 +73,12 @@ private class SM_GrantDisbursmentTest {
             thrown = true;
         }
 
-        System.assert(
+        Assert.isTrue(
             thrown,
             'Invalid support option should raise an AuraHandledException.'
         );
 
-        System.assertEquals(
+        Assert.areEqual(
             0,
             [SELECT COUNT() FROM Grant_Disbursed__c WHERE Contact__c = :contactId],
             'No grants should be created when the option is invalid.'
@@ -128,7 +116,7 @@ private class SM_GrantDisbursmentTest {
             ORDER BY Disbursed_Date__c
         ];
 
-        System.assertEquals(
+        Assert.areEqual(
             OPTION_1_DURATION,
             grants.size(),
             'Total grants (existing + newly created) should equal the option duration.'
@@ -143,8 +131,8 @@ private class SM_GrantDisbursmentTest {
                 pendingCount++;
             }
         }
-        System.assertEquals(2, disbursedCount, 'Existing disbursed grants should be preserved.');
-        System.assertEquals(1, pendingCount, 'Only the remaining months should be created.');
+        Assert.areEqual(2, disbursedCount, 'Existing disbursed grants should be preserved.');
+        Assert.areEqual(1, pendingCount, 'Only the remaining months should be created.');
     }
 
     @isTest
@@ -182,12 +170,12 @@ private class SM_GrantDisbursmentTest {
             thrown = true;
         }
 
-        System.assert(
+        Assert.isTrue(
             thrown,
             'Should refuse to issue further grants when the citizen is already fully supported.'
         );
 
-        System.assertEquals(
+        Assert.areEqual(
             3,
             [SELECT COUNT() FROM Grant_Disbursed__c WHERE Contact__c = :contactId],
             'No grants should be inserted on top of a fully disbursed plan.'
@@ -220,7 +208,7 @@ private class SM_GrantDisbursmentTest {
         } catch (AuraHandledException e) {
             thrown = true;
         }
-        System.assert(thrown, 'Over-disbursed citizens should also be blocked.');
+        Assert.isTrue(thrown, 'Over-disbursed citizens should also be blocked.');
     }
 
     @isTest
@@ -255,7 +243,7 @@ private class SM_GrantDisbursmentTest {
             ORDER BY Disbursed_Date__c
         ];
 
-        System.assertEquals(
+        Assert.areEqual(
             OPTION_1_DURATION,
             grants.size(),
             'Pending grants should be replaced by a complete fresh schedule.'
@@ -263,12 +251,12 @@ private class SM_GrantDisbursmentTest {
 
         Date expectedStart = Date.today().toStartOfMonth();
         for (Integer i = 0; i < grants.size(); i++) {
-            System.assertEquals(
+            Assert.areEqual(
                 expectedStart.addMonths(i),
                 grants[i].Disbursed_Date__c,
                 'Fresh schedule should restart from the current month.'
             );
-            System.assertEquals(false, grants[i].Is_Disbursed__c);
+            Assert.areEqual(false, grants[i].Is_Disbursed__c);
         }
     }
 
@@ -285,9 +273,9 @@ private class SM_GrantDisbursmentTest {
             FROM Grant_Disbursed__c
             WHERE Contact__c = :contactId
         ];
-        System.assertEquals(6, grants.size(), 'Option 2 should yield 6 monthly grants.');
+        Assert.areEqual(6, grants.size(), 'Option 2 should yield 6 monthly grants.');
         for (Grant_Disbursed__c g : grants) {
-            System.assertEquals(300, g.Disbursed_Amount__c);
+            Assert.areEqual(300, g.Disbursed_Amount__c);
         }
     }
 }

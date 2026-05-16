@@ -1,15 +1,3 @@
-/**
- * Unit tests for SM_GrantApplication.processApplication.
- *
- * Covers:
- *   - Validation failure (negative path) - exception propagated
- *   - New contact created (positive)
- *   - Existing contact updated (positive, lookup by phone)
- *   - Income >= 2000 (edge) - contact saved but no grants disbursed
- *   - Income <  2000 (positive) - grants are scheduled
- *   - Bulk-safety: a second application for a different citizen still
- *     produces an independent grant schedule
- */
 @isTest
 private class SM_GrantApplicationTest {
 
@@ -38,21 +26,21 @@ private class SM_GrantApplicationTest {
             FROM Contact
             WHERE Phone = '6500000010'
         ];
-        System.assertEquals(1, contacts.size(), 'A single contact should have been created.');
+        Assert.areEqual(1, contacts.size(), 'A single contact should have been created.');
 
         Contact c = contacts[0];
-        System.assertEquals('Jane', c.FirstName);
-        System.assertEquals('Doe', c.LastName);
-        System.assertEquals('123456', c.MailingPostalCode);
-        System.assertEquals(1500, c.Monthly_Income__c);
-        System.assertEquals('Option 1', c.Support_Option__c);
+        Assert.areEqual('Jane', c.FirstName);
+        Assert.areEqual('Doe', c.LastName);
+        Assert.areEqual('123456', c.MailingPostalCode);
+        Assert.areEqual(1500, c.Monthly_Income__c);
+        Assert.areEqual('Option 1', c.Support_Option__c);
 
         Integer grantCount = [
             SELECT COUNT()
             FROM Grant_Disbursed__c
             WHERE Contact__c = :c.Id
         ];
-        System.assertEquals(
+        Assert.areEqual(
             3,
             grantCount,
             'Income below threshold should trigger Option 1 disbursement (3 months).'
@@ -69,7 +57,7 @@ private class SM_GrantApplicationTest {
         Test.stopTest();
 
         Contact c = [SELECT Id FROM Contact WHERE Phone = '6500000011'];
-        System.assertEquals(
+        Assert.areEqual(
             0,
             [SELECT COUNT() FROM Grant_Disbursed__c WHERE Contact__c = :c.Id],
             'Citizens at or above the income threshold should not receive grants.'
@@ -83,7 +71,7 @@ private class SM_GrantApplicationTest {
         SM_GrantApplication.processApplication(w);
 
         Contact c = [SELECT Id FROM Contact WHERE Phone = '6500000012'];
-        System.assertEquals(
+        Assert.areEqual(
             0,
             [SELECT COUNT() FROM Grant_Disbursed__c WHERE Contact__c = :c.Id]
         );
@@ -117,22 +105,22 @@ private class SM_GrantApplicationTest {
             FROM Contact
             WHERE Phone = '6500000020'
         ];
-        System.assertEquals(
+        Assert.areEqual(
             1,
             contacts.size(),
             'Existing contact should be updated, not duplicated.'
         );
 
         Contact updated = contacts[0];
-        System.assertEquals(originalId, updated.Id, 'The same record should be reused.');
-        System.assertEquals('Fresh', updated.FirstName);
-        System.assertEquals('Name', updated.LastName);
-        System.assertEquals('999999', updated.MailingPostalCode);
-        System.assertEquals(1200, updated.Monthly_Income__c);
-        System.assertEquals('Option 2', updated.Support_Option__c);
+        Assert.areEqual(originalId, updated.Id, 'The same record should be reused.');
+        Assert.areEqual('Fresh', updated.FirstName);
+        Assert.areEqual('Name', updated.LastName);
+        Assert.areEqual('999999', updated.MailingPostalCode);
+        Assert.areEqual(1200, updated.Monthly_Income__c);
+        Assert.areEqual('Option 2', updated.Support_Option__c);
 
         // Option 2 = 6 months.
-        System.assertEquals(
+        Assert.areEqual(
             6,
             [SELECT COUNT() FROM Grant_Disbursed__c WHERE Contact__c = :originalId]
         );
@@ -150,8 +138,8 @@ private class SM_GrantApplicationTest {
             thrown = true;
         }
 
-        System.assert(thrown, 'Validation failure must raise an AuraHandledException.');
-        System.assertEquals(
+        Assert.isTrue(thrown, 'Validation failure must raise an AuraHandledException.');
+        Assert.areEqual(
             0,
             [SELECT COUNT() FROM Contact WHERE LastName != null],
             'No contact should be persisted when validation fails.'
@@ -168,7 +156,7 @@ private class SM_GrantApplicationTest {
         } catch (AuraHandledException e) {
             thrown = true;
         }
-        System.assert(thrown, 'Phone not starting with 65 should fail validation.');
+        Assert.isTrue(thrown, 'Phone not starting with 65 should fail validation.');
     }
 
     @isTest
@@ -182,7 +170,7 @@ private class SM_GrantApplicationTest {
         } catch (AuraHandledException e) {
             thrown = true;
         }
-        System.assert(thrown, 'Non-numeric postal code should fail validation.');
+        Assert.isTrue(thrown, 'Non-numeric postal code should fail validation.');
     }
 
     @isTest
@@ -195,7 +183,7 @@ private class SM_GrantApplicationTest {
         } catch (AuraHandledException e) {
             thrown = true;
         }
-        System.assert(thrown, 'Non-positive income should fail validation.');
+        Assert.isTrue(thrown, 'Non-positive income should fail validation.');
     }
 
     @isTest
@@ -206,10 +194,10 @@ private class SM_GrantApplicationTest {
         Map<Id, Contact> contactsByPhone = new Map<Id, Contact>(
             [SELECT Id, Phone FROM Contact WHERE Phone IN ('6500000040','6500000041')]
         );
-        System.assertEquals(2, contactsByPhone.size(), 'Each phone should map to its own contact.');
+        Assert.areEqual(2, contactsByPhone.size(), 'Each phone should map to its own contact.');
 
         for (Contact c : contactsByPhone.values()) {
-            System.assertEquals(
+            Assert.areEqual(
                 3,
                 [SELECT COUNT() FROM Grant_Disbursed__c WHERE Contact__c = :c.Id],
                 'Each citizen should receive their own full schedule.'

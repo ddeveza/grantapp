@@ -1,11 +1,3 @@
-/**
- * Unit tests for SM_GrantApplicationController.
- *
- * The controller is a thin @AuraEnabled facade that delegates to
- * SM_GrantApplication.processApplication. We verify the happy-path
- * delegation as well as the exception propagation contract that LWC
- * components rely on.
- */
 @isTest
 private class SM_GrantApplicationControllerTest {
 
@@ -34,12 +26,12 @@ private class SM_GrantApplicationControllerTest {
             FROM Contact
             WHERE Phone = '6577777777'
         ];
-        System.assertEquals(1, contacts.size(), 'Controller should persist the contact via the service.');
-        System.assertEquals('Aura', contacts[0].FirstName);
-        System.assertEquals('Option 2', contacts[0].Support_Option__c);
+        Assert.areEqual(1, contacts.size(), 'Controller should persist the contact via the service.');
+        Assert.areEqual('Aura', contacts[0].FirstName);
+        Assert.areEqual('Option 2', contacts[0].Support_Option__c);
 
         // Option 2 = 6 grants of $300.
-        System.assertEquals(
+        Assert.areEqual(
             6,
             [SELECT COUNT() FROM Grant_Disbursed__c WHERE Contact__c = :contacts[0].Id],
             'Controller should also trigger downstream disbursement scheduling.'
@@ -58,12 +50,12 @@ private class SM_GrantApplicationControllerTest {
             thrown = true;
         }
 
-        System.assert(
+        Assert.areEqual(
             thrown,
             'Validation errors from the service must surface to the @AuraEnabled caller.'
         );
 
-        System.assertEquals(
+        Assert.areEqual(
             0,
             [SELECT COUNT() FROM Contact WHERE LastName != null],
             'No contact should be created when the controller call fails validation.'
@@ -82,7 +74,7 @@ private class SM_GrantApplicationControllerTest {
             thrown = true;
         }
 
-        System.assert(
+        Assert.areEqual(
             thrown,
             'An unknown support option must propagate as an AuraHandledException to the LWC.'
         );

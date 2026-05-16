@@ -1,10 +1,3 @@
-/**
- * Unit tests for SM_ContactApexTriggerHandler.
- *
- * The handler is a pure in-memory transformation (trim phone and postal
- * code) so no DML is required. We exercise positive, negative and
- * edge-case (null / empty / bulk) paths.
- */
 @isTest(IsParallel=true)
 private class SM_ContactApexTriggerHandlerTest {
 
@@ -21,16 +14,8 @@ private class SM_ContactApexTriggerHandlerTest {
         SM_ContactApexTriggerHandler.handle(new List<Contact>{ c });
         Test.stopTest();
 
-        System.assertEquals(
-            '6512345678',
-            c.Phone,
-            'Phone should be trimmed of surrounding whitespace.'
-        );
-        System.assertEquals(
-            '123456',
-            c.MailingPostalCode,
-            'Postal code should be trimmed of surrounding whitespace.'
-        );
+        Assert.areEqual('6512345678', c.Phone, 'Phone should be trimmed of surrounding whitespace.');
+        Assert.areEqual('123456', c.MailingPostalCode, 'Postal code should be trimmed of surrounding whitespace.');
     }
 
     @isTest
@@ -42,16 +27,8 @@ private class SM_ContactApexTriggerHandlerTest {
 
         SM_ContactApexTriggerHandler.handle(new List<Contact>{ c });
 
-        System.assertEquals(
-            null,
-            c.Phone,
-            'Null phone should remain null (no NPE).'
-        );
-        System.assertEquals(
-            null,
-            c.MailingPostalCode,
-            'Null postal code should remain null (no NPE).'
-        );
+        Assert.areEqual(null, c.Phone, 'Null phone should remain null (no NPE).');
+        Assert.areEqual(null, c.MailingPostalCode, 'Null postal code should remain null (no NPE).');
     }
 
     @isTest
@@ -65,8 +42,8 @@ private class SM_ContactApexTriggerHandlerTest {
 
         SM_ContactApexTriggerHandler.handle(new List<Contact>{ c });
 
-        System.assertEquals('6500000000', c.Phone);
-        System.assertEquals('654321', c.MailingPostalCode);
+        Assert.areEqual('6500000000', c.Phone);
+        Assert.areEqual('654321', c.MailingPostalCode);
     }
 
     @isTest
@@ -83,15 +60,15 @@ private class SM_ContactApexTriggerHandlerTest {
 
         SM_ContactApexTriggerHandler.handle(new List<Contact>{ c });
 
-        System.assertEquals('', c.Phone);
-        System.assertEquals('', c.MailingPostalCode);
+        Assert.areEqual('', c.Phone);
+        Assert.areEqual('', c.MailingPostalCode);
     }
 
     @isTest
     static void handle_emptyListIsNoop() {
         SM_ContactApexTriggerHandler.handle(new List<Contact>());
         // Reaching this line without exception is the assertion.
-        System.assert(true, 'Empty list should be handled silently.');
+        Assert.areEqual(true, 'Empty list should be handled silently.');
     }
 
     @isTest
@@ -111,11 +88,11 @@ private class SM_ContactApexTriggerHandlerTest {
         Test.stopTest();
 
         for (Contact c : contacts) {
-            System.assert(
+            Assert.areEqual(
                 !c.Phone.startsWith(' ') && !c.Phone.endsWith(' '),
                 'Phone should be trimmed for every record in the batch.'
             );
-            System.assert(
+            Assert.areEqual(
                 !c.MailingPostalCode.startsWith(' ')
                     && !c.MailingPostalCode.endsWith(' '),
                 'Postal code should be trimmed for every record in the batch.'
