@@ -3,7 +3,7 @@ import { LightningElement, track } from 'lwc';
 import submitApplication
 from '@salesforce/apex/SM_GrantApplicationController.submitApplication';
 
-import { ShowToastEvent } from 'lightning/platformShowToastEvent';
+import Toast from 'lightning/toast';
 
 export default class GrantApplicationForm
     extends LightningElement {
@@ -77,13 +77,10 @@ export default class GrantApplicationForm
     }
 
     showToast(title, message, variant) {
-
-        this.dispatchEvent(
-            new ShowToastEvent({
-                title,
-                message,
-                variant
-            })
-        );
+        Toast.show({
+            label: title,
+            message,
+            variant
+        }, this);
     }
 }
