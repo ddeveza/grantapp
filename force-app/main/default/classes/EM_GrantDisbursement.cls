@@ -20,8 +20,4 @@ public with sharing class EM_GrantDisbursement {
         return result;
     }
 
-    public static Integer calculateRecordsNeeded(Decimal remainingAmount, Decimal monthlyAmount) {
-        return Integer.valueOf(Math.ceil(remainingAmount / monthlyAmount));
-    }
-
 }

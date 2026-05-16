@@ -19,14 +19,11 @@ public with sharing class SM_GrantDisbursment {
         }
 
         if (!analysis.grantsToDelete.isEmpty()) delete analysis.grantsToDelete;
-        
-        Decimal remainingAmount =  totalGrantAmount - analysis.alreadyDisbursed;
 
-        Integer recordsNeeded = EM_GrantDisbursement.calculateRecordsNeeded(remainingAmount, optionConfig.Monthly_Amount__c);
-        // Service Layer: Prepare new grants
+        Integer recordsNeeded = (Integer) optionConfig.Duration_Amount__c - analysis.grantsToDelete.size();
         List<Grant_Disbursed__c> newGrants = new List<Grant_Disbursed__c>();
         Date startDate = analysis.latestDisbursedDate != null ? analysis.latestDisbursedDate.addMonths(1) : Date.today().toStartOfMonth();
-        for (Integer i = 0; i < recordsNeeded; i++) {
+        for (Integer i = 1; i < recordsNeeded; i++) {
             newGrants.add(new Grant_Disbursed__c(
                 Contact__c = contactId,
                 Disbursed_Amount__c = optionConfig.Monthly_Amount__c,
@@ -34,7 +31,7 @@ public with sharing class SM_GrantDisbursment {
                 Is_Disbursed__c = false
             ));
         }
-        // Data Layer: Insert new grants
+       
         if (!newGrants.isEmpty()) insert newGrants;
     }
 }
