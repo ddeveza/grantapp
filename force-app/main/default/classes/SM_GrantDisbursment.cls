@@ -7,7 +7,7 @@ public with sharing class SM_GrantDisbursment {
             throw new AuraHandledException('Invalid support option configuration.');
         }
         
-        Decimal totalGrantAmount = optionConfig.Amount__c * optionConfig.Duration_Amount__c;
+        Decimal totalGrantAmount = optionConfig.Monthly_Amount__c * optionConfig.Duration_Amount__c;
 
         List<Grant_Disbursed__c> existingGrants = DM_GrantDisbursement.getGrantsForContact(contactId);
 

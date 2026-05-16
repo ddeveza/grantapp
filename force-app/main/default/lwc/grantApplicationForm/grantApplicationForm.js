@@ -1,7 +1,7 @@
 import { LightningElement, track } from 'lwc';
 
 import submitApplication
-    from '@salesforce/apex/GrantApplicationController.submitApplication';
+    from '@salesforce/apex/SM_GrantApplicationController.submitApplication';
 
 import { ShowToastEvent }
     from 'lightning/platformShowToastEvent';
