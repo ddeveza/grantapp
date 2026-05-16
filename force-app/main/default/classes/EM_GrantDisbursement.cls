@@ -1,6 +1,6 @@
 public with sharing class EM_GrantDisbursement {
     public class GrantDisbursementResult {
-        public Decimal alreadyDisbursed;
+        public Decimal alreadyDisbursed = 0;
         public Date latestDisbursedDate;
         public List<Grant_Disbursed__c> grantsToDelete = new List<Grant_Disbursed__c>();
     }

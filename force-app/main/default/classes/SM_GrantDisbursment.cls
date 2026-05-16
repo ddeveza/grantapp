@@ -19,8 +19,8 @@ public with sharing class SM_GrantDisbursment {
         }
 
         if (!analysis.grantsToDelete.isEmpty()) delete analysis.grantsToDelete;
-      
-        Decimal remainingAmount = totalGrantAmount - analysis.alreadyDisbursed;
+        
+        Decimal remainingAmount =  totalGrantAmount - analysis.alreadyDisbursed;
 
         Integer recordsNeeded = EM_GrantDisbursement.calculateRecordsNeeded(remainingAmount, optionConfig.Monthly_Amount__c);
         // Service Layer: Prepare new grants

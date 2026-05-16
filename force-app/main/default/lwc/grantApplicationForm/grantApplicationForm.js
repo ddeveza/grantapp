@@ -1,10 +1,9 @@
 import { LightningElement, track } from 'lwc';
 
 import submitApplication
-    from '@salesforce/apex/SM_GrantApplicationController.submitApplication';
+from '@salesforce/apex/SM_GrantApplicationController.submitApplication';
 
-import { ShowToastEvent }
-    from 'lightning/platformShowToastEvent';
+import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 
 export default class GrantApplicationForm
     extends LightningElement {
@@ -17,9 +16,9 @@ export default class GrantApplicationForm
     @track supportOption;
 
     supportOptions = [
-        { label: 'Option 1', value: 'Option_1' },
-        { label: 'Option 2', value: 'Option_2' },
-        { label: 'Option 3', value: 'Option_3' }
+        { label: 'Option 1', value: 'Option 1' },
+        { label: 'Option 2', value: 'Option 2' },
+        { label: 'Option 3', value: 'Option 3' }
     ];
 
     handleFirstName(event) {
@@ -47,13 +46,12 @@ export default class GrantApplicationForm
     }
 
     async submitForm() {
-
+        const firstName = this.firstName;
         try {
 
             await submitApplication({
-
                 request: {
-                    firstName: this.firstName,
+                    firstName,
                     lastName: this.lastName,
                     phone: this.phone,
                     postalCode: this.postalCode,
