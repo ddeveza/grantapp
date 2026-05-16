@@ -1,6 +1,7 @@
 public with sharing class EM_GrantDisbursement {
     public class GrantDisbursementResult {
-        public Decimal alreadyDisbursed = 0;
+        public Integer alreadyDisbursedCount = 0;
+        public Decimal totalDisbursed = 0;
         public Date latestDisbursedDate;
         public List<Grant_Disbursed__c> grantsToDelete = new List<Grant_Disbursed__c>();
     }
@@ -9,7 +10,8 @@ public with sharing class EM_GrantDisbursement {
         GrantDisbursementResult result = new GrantDisbursementResult();
         for (Grant_Disbursed__c grant : existingGrants) {
             if (grant.Is_Disbursed__c) {
-                result.alreadyDisbursed += grant.Disbursed_Amount__c;
+                result.alreadyDisbursedCount++;
+                result.totalDisbursed += grant.Disbursed_Amount__c;
                 if (result.latestDisbursedDate == null || grant.Disbursed_Date__c > result.latestDisbursedDate) {
                     result.latestDisbursedDate = grant.Disbursed_Date__c;
                 }

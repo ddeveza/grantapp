@@ -14,16 +14,16 @@ public with sharing class SM_GrantDisbursment {
         //to get the already disbursed, grants to delete and latest disbursed date
         EM_GrantDisbursement.GrantDisbursementResult analysis = EM_GrantDisbursement.analyzeGrants(existingGrants);
 
-        if (analysis.alreadyDisbursed >= totalGrantAmount) {
+        if (analysis.totalDisbursed >= totalGrantAmount) {
             throw new AuraHandledException('Citizen already received equal or greater support amount.');
         }
 
         if (!analysis.grantsToDelete.isEmpty()) delete analysis.grantsToDelete;
 
-        Integer recordsNeeded = (Integer) optionConfig.Duration_Amount__c - analysis.grantsToDelete.size();
+        Integer recordsNeeded = (Integer) optionConfig.Duration_Amount__c - analysis.alreadyDisbursedCount;
         List<Grant_Disbursed__c> newGrants = new List<Grant_Disbursed__c>();
         Date startDate = analysis.latestDisbursedDate != null ? analysis.latestDisbursedDate.addMonths(1) : Date.today().toStartOfMonth();
-        for (Integer i = 1; i < recordsNeeded; i++) {
+        for (Integer i = 0; i < recordsNeeded; i++) {
             newGrants.add(new Grant_Disbursed__c(
                 Contact__c = contactId,
                 Disbursed_Amount__c = optionConfig.Monthly_Amount__c,
